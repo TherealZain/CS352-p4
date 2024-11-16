@@ -170,23 +170,28 @@ def send_reliable(cs, filedata, receiver_binding, win_size):
 
     # TODO: This is where you will make your changes. You
     # will not need to change any other parts of this file.
-    transmit_entire_window_from(win_left_edge)
+    first_to_tx = transmit_entire_window_from(win_left_edge)
+    final_ack = INIT_SEQNO + content_len
 
-    while last_acked < INIT_SEQNO + content_len:
+    while last_acked < final_ack:
         rlist, _, _ = select.select([cs], [], [], RTO)
         if rlist:
             data_from_receiver, receiver_addr = cs.recvfrom(100)
             ack_msg = Msg.deserialize(data_from_receiver)
             print(f"Received {str(ack_msg)}")
 
+            if ack_msg.ack == first_to_tx:
+                first_to_tx = transmit_entire_window_from(win_left_edge)
+
             if ack_msg.ack > last_acked:
                 last_acked = ack_msg.ack
                 win_left_edge = last_acked
                 win_right_edge = min(win_left_edge + win_size, INIT_SEQNO + content_len)
-                transmit_entire_window_from(last_acked)
+
+            
         else:
             print("Timeout occurred, retransmitting from window left edge...")
-            transmit_one()
+            first_to_tx = transmit_one()
 
 if __name__ == "__main__":
     args = parse_args()

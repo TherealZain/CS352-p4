@@ -181,8 +181,7 @@ def send_reliable(cs, filedata, receiver_binding, win_size):
 
             if ack_msg.ack > win_left_edge:
                 win_left_edge = ack_msg.ack
-
-            
+                
         else:
             print("Timeout occurred, retransmitting from window left edge...")
             transmit_one()
