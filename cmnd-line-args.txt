@@ -1,0 +1,25 @@
+USE THESE FOR TESTING 
+
+FOR STOP AND WAIT:
+python3 receiver.py --pktloss noloss --ackloss noloss
+python3 receiver.py --pktloss everyn --pktlossN 3 --ackloss noloss
+python3 receiver.py --pktloss everyn --pktlossN 10 --ackloss noloss
+python3 receiver.py --pktloss noloss --ackloss everyn --acklossN 3 
+python3 receiver.py --pktloss noloss --ackloss everyn --acklossN 10
+python3 receiver.py --pktloss alteveryn --pktlossN 8 --ackloss noloss 
+python3 receiver.py --pktloss noloss --ackloss alteveryn --acklossN 8 
+python3 receiver.py --pktloss iid --pktlossN 5 --ackloss noloss
+python3 receiver.py --pktloss noloss --ackloss iid --acklossN 5
+python3 receiver.py --pktloss everyn --pktlossN 3 --ackloss alteveryn --acklossN 4
+
+FOR PIPELINED RELIABILITY:
+python3 receiver.py --ooo_enabled --pktloss noloss --ackloss noloss
+python3 receiver.py --ooo_enabled --pktloss everyn --pktlossN 3 --ackloss noloss
+python3 receiver.py --ooo_enabled --pktloss everyn --pktlossN 10 --ackloss noloss
+python3 receiver.py --ooo_enabled --pktloss noloss --ackloss everyn --acklossN 3 
+python3 receiver.py --ooo_enabled --pktloss noloss --ackloss everyn --acklossN 10
+python3 receiver.py --ooo_enabled --pktloss alteveryn --pktlossN 8 --ackloss noloss 
+python3 receiver.py --ooo_enabled --pktloss noloss --ackloss alteveryn --acklossN 8 
+python3 receiver.py --ooo_enabled --pktloss iid --pktlossN 5 --ackloss noloss
+python3 receiver.py --ooo_enabled --pktloss noloss --ackloss iid --acklossN 5
+python3 receiver.py --ooo_enabled --pktloss everyn --pktlossN 3 --ackloss alteveryn --acklossN 4
