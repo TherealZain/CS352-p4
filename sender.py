@@ -130,8 +130,10 @@ def send_reliable(cs, filedata, receiver_binding, win_size):
 
     win_left_edge = INIT_SEQNO
     last_acked = INIT_SEQNO
+    first_to_tx = win_left_edge
     win_right_edge = min(win_left_edge + win_size,
                          INIT_SEQNO + content_len)
+    final_ack = INIT_SEQNO + content_len
 
     # Method to transmit all data between window left and
     # right edges. Typically used for just fresh
@@ -170,8 +172,7 @@ def send_reliable(cs, filedata, receiver_binding, win_size):
 
     # TODO: This is where you will make your changes. You
     # will not need to change any other parts of this file.
-    first_to_tx = transmit_entire_window_from(win_left_edge)
-    final_ack = INIT_SEQNO + content_len
+    first_to_tx = transmit_entire_window_from(first_to_tx)
 
     while last_acked < final_ack:
         rlist, _, _ = select.select([cs], [], [], RTO)
@@ -180,18 +181,21 @@ def send_reliable(cs, filedata, receiver_binding, win_size):
             ack_msg = Msg.deserialize(data_from_receiver)
             print(f"Received {str(ack_msg)}")
 
-            if ack_msg.ack == first_to_tx:
-                first_to_tx = transmit_entire_window_from(win_left_edge)
-
             if ack_msg.ack > last_acked:
                 last_acked = ack_msg.ack
                 win_left_edge = last_acked
                 win_right_edge = min(win_left_edge + win_size, INIT_SEQNO + content_len)
 
-            
+                # Determine if there are new packets to transmit
+                if first_to_tx < win_right_edge:
+                    first_to_tx = transmit_entire_window_from(first_to_tx)
+                else:
+                    # No new packets to transmit
+                    pass
+
         else:
-            print("Timeout occurred, retransmitting from window left edge...")
-            first_to_tx = transmit_one()
+            print("Timeout occurred, retransmitting packet at window left edge...")
+            transmit_one()
 
 if __name__ == "__main__":
     args = parse_args()
